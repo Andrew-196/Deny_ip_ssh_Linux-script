@@ -1,0 +1,47 @@
+#!/bin/bash
+echo "hello $USER"
+username="$USER"
+host_IP="$(hostname -I)"
+echo "your host ip - $host_IP"
+find_bash="/home/andrew/bash.sh"
+echo "Ты тут - $(pwd) ---- bash.sh находится в $find_bash ----"
+
+if [ "$username" == "andrew" ]; then
+ echo "username - andrew"
+else
+ echo "you are not andrew"
+fi
+
+echo "----------"
+
+sysctl="$(systemctl status ssh | grep -e Active -e Main.PID)"
+process_ssh="$(ps -ef | grep ssh)"
+echo "STATUS SSH"
+echo "$sysctl"
+
+echo "----------"
+
+echo "SATUS PROCESS SSH"
+echo "$process_ssh"
+
+echo "----------"
+
+read -p "Напишите PID process для проверки в netstat - " number
+
+netstat="$(sudo netstat -tnp | grep $number)"
+echo "$netstat"
+
+
+read -p "Запретить данный  ip-address? (да/нет) - " deny
+if [[ "$deny" == "да" || "$deny" == "ДА" || "$deny" == "yes" || "$deny" == "YES" ]]; then
+
+ read -p "Введите ip-address - " ip
+ echo "sshd:$ip" | sudo tee -a /etc/hosts.deny
+ echo "$deny"
+ echo "Запрещён IP и добавлен в hosts.deny - $ip"
+
+else
+ echo "Вы отменили запрет IP"
+fi
+#ДОБАВЛЕНИЕ БЕЗ ПРОВЕРКИ КОРРЕКТНОГО ВВОДА IP
+
